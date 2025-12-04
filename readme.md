@@ -178,20 +178,6 @@ npm run dev
 VITE_API_URL=http://localhost:5000/api
 ```
 
----
-
-# 🖥️ Screenshots (Add these later)
-
-```
-📌 Landing Page  
-📌 Login / Register  
-📌 Upload Page  
-📌 Dashboard – Summary  
-📌 Spend Breakdown  
-📌 Insights Panel  
-```
-
----
 
 # 🚀 Roadmap / Future Enhancements
 
