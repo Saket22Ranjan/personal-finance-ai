@@ -221,10 +221,3 @@ VITE_API_URL=http://localhost:5000/api
 If you like this project, ⭐ star it on GitHub!
 
 ---
-
-If you want, I can also generate:
-
-✅ **A logo pack (light + dark mode)**
-✅ **Architecture diagram as PNG/SVG**
-✅ **UI screenshots mockup**
-Just tell me **“Generate logo”** or **“Give architecture image”**.
