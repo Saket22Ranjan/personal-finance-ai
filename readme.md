@@ -1,10 +1,3 @@
-Here is a **professional, startup-quality README.md** for your **Personal Finance AI** project.
-It includes: ⭐ Premium formatting ⭐ Architecture diagram (Markdown SVG-style) ⭐ Features ⭐ API flow ⭐ Setup steps ⭐ Screenshots placeholders ⭐ Tech stack ⭐ Future scope
-
-Just copy–paste this into **README.md** and push to GitHub.
-
----
-
 # 🚀 Personal Finance AI – Smart Expense Tracking from Bank Statements
 
 AI-powered personal finance dashboard built using **MERN + ML categorization**.
