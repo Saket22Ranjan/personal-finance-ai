@@ -1,95 +1,143 @@
-import { useState } from "react";
+// src/pages/Login.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE = "http://localhost:5000/api";
 
-export default function Login({ onLogin }) {
-    const [isRegister, setIsRegister] = useState(false);
-    const [form, setForm] = useState({ name: "", email: "", password: "" });
+export default function Login() {
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleChange = (e) =>
-        setForm({ ...form, [e.target.name]: e.target.value });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError("");
+        setLoading(true);
+
         try {
-            const url = isRegister ? "/auth/register" : "/auth/login";
-            const payload = isRegister
-                ? form
-                : { email: form.email, password: form.password };
-            const res = await axios.post(API_BASE + url, payload);
-            onLogin(res.data);
+            if (!email || !password) {
+                throw new Error("Please enter email and password");
+            }
+
+            // ✅ REAL LOGIN CALL TO BACKEND
+            const res = await axios.post(`${API_BASE}/auth/login`, {
+                email,
+                password,
+            });
+
+            // Console me dekh sakte ho kya mil raha:
+            // console.log("Login response:", res.data);
+
+            // ⚠️ Most likely backend returns { token: "..." }
+            // If name different ho (e.g. accessToken), yahan change karna.
+            const token = res.data?.token;
+            if (!token) {
+                throw new Error("Login successful but token missing in response");
+            }
+
+            // 👉 Ye wahi key hai jo Dashboard + upload use kar rahe hain
+            localStorage.setItem("token", token);
+
+            // Optional: email bhi store kar sakte ho
+            localStorage.setItem("userEmail", email);
+
+            navigate("/dashboard");
         } catch (err) {
-            setError(err.response?.data?.message || "Something went wrong");
+            console.error("Login error:", err);
+            const msg =
+                err.response?.data?.message ||
+                err.message ||
+                "Failed to login. Please try again.";
+            setError(msg);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-50">
-            <div className="w-full max-w-md bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-lg">
-                <h1 className="text-2xl font-semibold mb-4 text-center">
-                    Personal Finance AI
-                </h1>
-                <p className="text-sm text-slate-400 mb-4 text-center">
-                    Upload bank statements. Track burn. Get AI insights.
-                </p>
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4">
+            <div className="max-w-md w-full space-y-6">
+                {/* Logo + heading */}
+                <div className="text-center">
+                    <div className="mx-auto h-12 w-12 rounded-3xl bg-gradient-to-tr from-emerald-400 via-sky-400 to-blue-500 flex items-center justify-center text-2xl font-black shadow-lg shadow-emerald-500/40">
+                        ₹
+                    </div>
+                    <h1 className="mt-4 text-2xl font-semibold text-slate-50">
+                        Personal Finance AI
+                    </h1>
+                    <p className="mt-1 text-sm text-slate-400">
+                        Secure login to your money dashboard.
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3">
-                    {isRegister && (
-                        <input
-                            name="name"
-                            placeholder="Full name"
-                            className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm"
-                            value={form.name}
-                            onChange={handleChange}
-                            required
-                        />
-                    )}
-                    <input
-                        name="email"
-                        type="email"
-                        placeholder="Email"
-                        className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm"
-                        value={form.password}
-                        onChange={handleChange}
-                        required
-                    />
-                    {error && (
-                        <p className="text-xs text-red-400 bg-red-950/40 px-2 py-1 rounded">
-                            {error}
-                        </p>
-                    )}
-                    <button
-                        disabled={loading}
-                        className="w-full py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-sm font-medium disabled:opacity-60"
-                    >
-                        {loading ? "Please wait..." : isRegister ? "Create account" : "Log in"}
-                    </button>
-                </form>
+                {/* Card */}
+                <div className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur-xl p-6 shadow-xl shadow-black/50">
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        {error && (
+                            <div className="text-xs rounded-lg border border-rose-500/50 bg-rose-500/10 text-rose-200 px-3 py-2">
+                                {error}
+                            </div>
+                        )}
 
-                <button
-                    className="mt-4 w-full text-xs text-slate-400 hover:text-slate-200"
-                    onClick={() => setIsRegister((p) => !p)}
-                >
-                    {isRegister
-                        ? "Already have an account? Log in"
-                        : "New here? Create an account"}
-                </button>
+                        <div className="space-y-1">
+                            <label className="block text-xs font-medium text-slate-200">
+                                Email address
+                            </label>
+                            <input
+                                type="email"
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="block text-xs font-medium text-slate-200">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs text-slate-400">
+                            <label className="inline-flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    className="h-3 w-3 rounded border-slate-600 bg-slate-900 text-emerald-500 focus:ring-emerald-400"
+                                />
+                                <span>Remember this device</span>
+                            </label>
+                            <button
+                                type="button"
+                                className="hover:text-emerald-300 transition"
+                            >
+                                Forgot password?
+                            </button>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full inline-flex items-center justify-center rounded-full bg-emerald-500 text-slate-950 text-sm font-semibold px-4 py-2.5 mt-2 hover:bg-emerald-400 transition shadow-lg shadow-emerald-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {loading ? "Logging in..." : "Login"}
+                        </button>
+                    </form>
+
+                    <p className="mt-4 text-[11px] text-slate-500 text-center">
+                        By continuing, you agree to our Terms & Privacy Policy.
+                    </p>
+                </div>
             </div>
         </div>
     );
