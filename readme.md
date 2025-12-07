@@ -50,7 +50,6 @@ Also identifies:
 
 # 🏗️ Architecture Overview
 
-```mermaid
 flowchart LR
     A[User Browser] --> B[Frontend (React + Vite)]
     B -->|File Upload / Auth| C[Backend API (Node + Express)]
