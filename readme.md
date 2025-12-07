@@ -48,20 +48,6 @@ Also identifies:
 
 ---
 
-# 🏗️ Architecture Overview
-
-flowchart LR
-    A[User Browser] --> B[Frontend (React + Vite)]
-    B -->|File Upload / Auth| C[Backend API (Node + Express)]
-    C -->|Parse CSV/PDF| D[Parser Engine]
-    D --> E[AI Categorizer (Rule-based + ML-ready)]
-    C --> F[(MongoDB)]
-    E --> F
-    F --> B
-```
-
----
-
 # 📂 Project Structure
 
 ```
